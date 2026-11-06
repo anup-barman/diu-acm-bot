@@ -63,7 +63,19 @@ def send_notice_to_chats(bot, message: str, chat_ids: list[str]) -> bool:
             success_any = True
             time.sleep(1.0)  # Gentle delay between broadcasts
         except Exception as e:
-            logger.error("Failed to send notice to %s: %s", chat_id, e)
+            logger.error("❌ Failed to send notice to %s: %s", chat_id, e)
+            err_msg = str(e).lower()
+            if "not a member" in err_msg or "forbidden" in err_msg:
+                logger.error(
+                    "👉 FIX: Your bot (@%s) MUST be added as an ADMINISTRATOR in '%s' with 'Post Messages' permission!",
+                    getattr(bot, "get_me", lambda: None)() and getattr(bot, "get_me", lambda: None)().username or "bot",
+                    chat_id,
+                )
+            elif "chat not found" in err_msg:
+                logger.error(
+                    "👉 FIX: Chat '%s' was not found. For public channels, use format '@channel_name'.",
+                    chat_id,
+                )
 
     return success_any
 
@@ -129,12 +141,12 @@ def check_and_notify(
                 print("=" * 50)
                 print(message)
                 print("=" * 50 + "\n")
+                notified_contests.append(contest)
             else:
                 sent = send_notice_to_chats(bot, message, config.TELEGRAM_CHAT_IDS)
                 if sent:
                     store.mark_notified(contest)
-
-            notified_contests.append(contest)
+                    notified_contests.append(contest)
 
     return notified_contests
 

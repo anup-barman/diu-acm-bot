@@ -16,10 +16,22 @@ load_dotenv(BASE_DIR / ".env")
 # Telegram Bot Token
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 
+def _normalize_chat_id(cid: str) -> str:
+    cid = cid.strip()
+    if cid.startswith("https://t.me/"):
+        cid = "@" + cid[len("https://t.me/"):].strip("/")
+    elif cid.startswith("http://t.me/"):
+        cid = "@" + cid[len("http://t.me/"):].strip("/")
+    elif cid.startswith("t.me/"):
+        cid = "@" + cid[len("t.me/"):].strip("/")
+    elif not cid.startswith("@") and not cid.startswith("-") and not cid.isdigit():
+        cid = "@" + cid
+    return cid
+
 # Destination Chat / Channel ID(s)
 # Can be single ID or comma-separated list
 _raw_chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-TELEGRAM_CHAT_IDS = [cid.strip() for cid in _raw_chat_id.split(",") if cid.strip()]
+TELEGRAM_CHAT_IDS = [_normalize_chat_id(cid) for cid in _raw_chat_id.split(",") if cid.strip()]
 
 # Timezone
 TIMEZONE_NAME = os.getenv("TIMEZONE", "Asia/Dhaka").strip()
