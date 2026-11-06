@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  contest-bot:
+    build: .
+    container_name: diu_acm_contest_bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./notified_contests.json:/app/notified_contests.json
