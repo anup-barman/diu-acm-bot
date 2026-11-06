@@ -1,0 +1,24 @@
+# Environment variables
+.env
+
+# Storage for notified contests
+notified_contests.json
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Logs
+*.log
+bot.log
+
+# IDE files
+.vscode/
+.idea/
